@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ruleta de Opciones</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8f8fa;
+            margin: 0;
+            padding: 0;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        .container {
+            max-width: 420px;
+            margin: 30px auto 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 28px 24px 24px 24px;
+        }
+        #opcion {
+            width: 60%;
+            padding: 8px 10px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-bottom: 10px;
+            transition: border 0.2s;
+        }
+        #opcion:focus {
+            border: 1.5px solid #4a90e2;
+            outline: none;
+        }
+        #agregar, #borrar-todo, #girar {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-left: 6px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        #agregar {
+            background: #4a90e2;
+            color: #fff;
+        }
+        #agregar:disabled {
+            background: #b3d1f7;
+            color: #fff;
+            cursor: not-allowed;
+        }
+        #borrar-todo {
+            background: #e74c3c;
+            color: #fff;
+        }
+        #borrar-todo:disabled {
+            background: #f5b7b1;
+            color: #fff;
+            cursor: not-allowed;
+        }
+        #girar {
+            background: #27ae60;
+            color: #fff;
+            margin-top: 10px;
+            width: 100%;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        #girar:disabled {
+            background: #b7eacb;
+            color: #fff;
+            cursor: not-allowed;
+        }
+        #opciones {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 18px 0;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        #opciones li {
+            background: #f4f8fb;
+            margin-bottom: 7px;
+            padding: 7px 12px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1em;
+            color: #333;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .eliminar-btn {
+            margin-left: 10px;
+            color: #fff;
+            background: #e00;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            padding: 2px 9px 2px 9px;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+        .eliminar-btn:hover {
+            background: #b30000;
+        }
+        #ruleta {
+            display: block;
+            margin: 18px auto 10px auto;
+            background: #f4f8fb;
+            border: 2px solid #4a90e2;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(74,144,226,0.08);
+        }
+        #resultado {
+            margin-top: 22px;
+            font-size: 1.25em;
+            font-weight: bold;
+            text-align: center;
+            color: #27ae60;
+            min-height: 1.5em;
+            letter-spacing: 1px;
+        }
+        .switch-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 14px 0 0 0;
+            font-size: 1em;
+            color: #444;
+            user-select: none;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            vertical-align: middle;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            border-radius: 24px;
+            transition: background 0.2s;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .switch input:checked + .slider {
+            background-color: #4a90e2;
+        }
+        .switch input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        .timer-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 14px 0 0 0;
+            font-size: 1em;
+            color: #444;
+            user-select: none;
+        }
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 18px;
+            margin-bottom: 0;
+            min-height: 60px;
+        }
+        .timer-display {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4a90e2;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .timer-play-btn {
+            background: #4a90e2;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 7px 22px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .timer-play-btn:disabled {
+            background: #b3d1f7;
+            color: #fff;
+            cursor: not-allowed;
+        }
+        @media (max-width: 500px) {
+            .container {
+                max-width: 98vw;
+                padding: 10px 2vw 18px 2vw;
+            }
+            #ruleta {
+                width: 98vw !important;
+                height: 98vw !important;
+                max-width: 300px;
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Ruleta de Opciones</h2>
+    <div class="container">
+        <input type="text" id="opcion" placeholder="Agregar opción" />
+        <button id="agregar">Agregar</button>
+        <button id="borrar-todo">Borrar todas</button>
+        <label class="switch-label">
+            <span>Eliminar opción automáticamente al ser elegida</span>
+            <span class="switch">
+                <input type="checkbox" id="eliminar-al-elegir">
+                <span class="slider"></span>
+            </span>
+        </label>
+        <label class="timer-label">
+            <span>Mostrar timer de</span>
+            <input type="number" id="timer-minutos" min="1" max="99" value="1" style="width:48px; margin:0 6px; border-radius:4px; border:1px solid #bbb; padding:3px 6px; font-size:1em;">
+            <span>minuto(s)</span>
+            <span class="switch">
+                <input type="checkbox" id="habilitar-timer">
+                <span class="slider"></span>
+            </span>
+        </label>
+        <ul id="opciones"></ul>
+        <canvas id="ruleta" width="300" height="300"></canvas><br>
+        <button id="girar">Girar Ruleta</button>
+        <div id="resultado"></div>
+        <div id="timer-container" class="timer-container" style="display:none;">
+            <div id="timer-display" class="timer-display">01:00</div>
+            <button id="timer-play" class="timer-play-btn">▶ Iniciar</button>
+        </div>
+    </div>
+    <script>
+        function drawWheel(canvas, options, angle) {
+            const ctx = canvas.getContext("2d");
+            const size = canvas.width;
+            const radius = size / 2;
+            ctx.clearRect(0, 0, size, size);
+
+            const n = options.length;
+            if (n === 0) return;
+            const arc = (2 * Math.PI) / n;
+
+            for (let i = 0; i < n; i++) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(radius, radius);
+                ctx.arc(
+                    radius,
+                    radius,
+                    radius - 10,
+                    angle + i * arc,
+                    angle + (i + 1) * arc
+                );
+                ctx.closePath();
+                ctx.fillStyle = `hsl(${(i * 360) / n}, 80%, 70%)`;
+                ctx.fill();
+                ctx.stroke();
+
+                // Texto
+                ctx.translate(radius, radius);
+                ctx.rotate(angle + i * arc + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#333";
+                ctx.font = "16px sans-serif";
+                ctx.fillText(options[i], radius - 30, 0);
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.restore();
+            }
+
+            // Flecha apuntando hacia abajo y hacia adentro
+            ctx.save();
+            ctx.translate(radius, radius);
+            ctx.rotate(Math.PI / 2); // Apunta hacia abajo
+            ctx.beginPath();
+            // Triángulo hacia adentro
+            ctx.moveTo(0, radius - 5);         // punta del triángulo (hacia adentro)
+            ctx.lineTo(-10, radius - 25);      // base izquierda
+            ctx.lineTo(10, radius - 25);       // base derecha
+            ctx.closePath();
+            ctx.fillStyle = "#e00";
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // Cargar opciones desde localStorage
+        const opciones = JSON.parse(localStorage.getItem('opcionesRuleta') || '[]');
+        const ul = document.getElementById('opciones');
+        const input = document.getElementById('opcion');
+        const btnAgregar = document.getElementById('agregar');
+        const btnGirar = document.getElementById('girar');
+        const btnBorrarTodo = document.getElementById('borrar-todo');
+        const canvas = document.getElementById('ruleta');
+        const ctx = canvas.getContext('2d');
+        let angulo = 0;
+        let girando = false;
+        const resultadoDiv = document.getElementById('resultado');
+        const chkEliminarAlElegir = document.getElementById('eliminar-al-elegir');
+        const chkHabilitarTimer = document.getElementById('habilitar-timer');
+        const timerMinutosInput = document.getElementById('timer-minutos');
+        const timerContainer = document.getElementById('timer-container');
+        const timerDisplay = document.getElementById('timer-display');
+        const timerPlayBtn = document.getElementById('timer-play');
+        let timer = null;
+        let timerSegundos = 60;
+        let timerActivo = false;
+        let ultimaOpcionSeleccionada = null;
+
+        function getTimerSegundos() {
+            let min = parseInt(timerMinutosInput.value, 10);
+            if (isNaN(min) || min < 1) min = 1;
+            if (min > 99) min = 99;
+            return min * 60;
+        }
+
+        function guardarOpciones() {
+            localStorage.setItem('opcionesRuleta', JSON.stringify(opciones));
+        }
+
+        function dibujarRuleta(angle = 0) {
+            ctx.clearRect(0, 0, 300, 300);
+            const n = opciones.length;
+            if (n === 0) return;
+            const radio = 150;
+            const arc = 2 * Math.PI / n;
+            for (let i = 0; i < n; i++) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(150, 150);
+                ctx.arc(150, 150, radio - 10, angle + i * arc, angle + (i + 1) * arc);
+                ctx.closePath();
+                ctx.fillStyle = `hsl(${i * 360 / n}, 80%, 70%)`;
+                ctx.fill();
+                ctx.stroke();
+                // Texto
+                ctx.translate(150, 150);
+                ctx.rotate(angle + i * arc + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#333";
+                ctx.font = "16px sans-serif";
+                ctx.fillText(opciones[i], radio - 30, 0);
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.restore();
+            }
+            // Flecha apuntando hacia abajo y hacia adentro
+            ctx.save();
+            ctx.translate(150, 150);
+            ctx.rotate(Math.PI); // Apunta hacia abajo
+            ctx.beginPath();
+            // Triángulo hacia adentro
+            ctx.moveTo(0, radio - 5);         // punta del triángulo (hacia adentro)
+            ctx.lineTo(-5, radio - 25);      // base izquierda
+            ctx.lineTo(5, radio - 25);       // base derecha
+            ctx.closePath();
+            ctx.fillStyle = "#e00";
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function actualizarLista() {
+            ul.innerHTML = '';
+            opciones.forEach((op, i) => {
+                const li = document.createElement('li');
+                li.textContent = op;
+                // Botón eliminar
+                const btnEliminar = document.createElement('button');
+                btnEliminar.textContent = "✕";
+                btnEliminar.className = "eliminar-btn";
+                btnEliminar.setAttribute('data-index', i);
+                btnEliminar.onclick = function(e) {
+                    const idx = parseInt(e.target.getAttribute('data-index'));
+                    opciones.splice(idx, 1);
+                    angulo = 0;
+                    actualizarLista();
+                    resultadoDiv.textContent = "";
+                };
+                li.appendChild(btnEliminar);
+                ul.appendChild(li);
+            });
+            dibujarRuleta(angulo);
+            guardarOpciones();
+            // Deshabilitar botón girar si hay menos de 2 opciones
+            btnGirar.disabled = opciones.length < 2;
+        }
+
+        btnAgregar.onclick = function() {
+            const val = input.value.trim();
+            if (val && !opciones.includes(val)) {
+                opciones.push(val);
+                input.value = '';
+                actualizarLista();
+            }
+        };
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') btnAgregar.onclick();
+        });
+
+        function resetTimerUI() {
+            timerSegundos = getTimerSegundos();
+            let min = String(Math.floor(timerSegundos / 60)).padStart(2, '0');
+            let seg = String(timerSegundos % 60).padStart(2, '0');
+            timerDisplay.textContent = `${min}:${seg}`;
+            timerPlayBtn.disabled = false;
+        }
+
+        function mostrarTimerSiEsNecesario() {
+            if (chkHabilitarTimer.checked && ultimaOpcionSeleccionada !== null) {
+                timerContainer.style.display = "";
+                resetTimerUI();
+            } else {
+                timerContainer.style.display = "none";
+                detenerTimer();
+            }
+        }
+
+        function detenerTimer() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            timerActivo = false;
+            timerPlayBtn.disabled = false;
+        }
+
+        timerPlayBtn.onclick = function() {
+            if (timerActivo) return;
+            timerActivo = true;
+            timerPlayBtn.disabled = true;
+            timer = setInterval(() => {
+                timerSegundos--;
+                let min = String(Math.floor(timerSegundos / 60)).padStart(2, '0');
+                let seg = String(timerSegundos % 60).padStart(2, '0');
+                timerDisplay.textContent = `${min}:${seg}`;
+                if (timerSegundos <= 0) {
+                    detenerTimer();
+                    timerDisplay.textContent = "00:00";
+                }
+            }, 1000);
+        };
+
+        chkHabilitarTimer.addEventListener('change', function() {
+            mostrarTimerSiEsNecesario();
+        });
+
+        timerMinutosInput.addEventListener('change', function() {
+            // Limitar valores y actualizar timer si está visible
+            let min = parseInt(timerMinutosInput.value, 10);
+            if (isNaN(min) || min < 1) min = 1;
+            if (min > 99) min = 99;
+            timerMinutosInput.value = min;
+            if (timerContainer.style.display !== "none") {
+                resetTimerUI();
+                detenerTimer();
+            }
+        });
+
+        btnGirar.onclick = function() {
+            // Eliminar la opción seleccionada anterior si el switch está activado
+            if (
+                chkEliminarAlElegir.checked &&
+                ultimaOpcionSeleccionada !== null &&
+                opciones.length > 0
+            ) {
+                // Buscar y eliminar solo si existe (puede haber sido eliminada manualmente)
+                const idx = opciones.indexOf(ultimaOpcionSeleccionada);
+                if (idx !== -1) {
+                    opciones.splice(idx, 1);
+                    angulo = 0;
+                    actualizarLista();
+                }
+                ultimaOpcionSeleccionada = null;
+            }
+
+            if (opciones.length < 2 || girando) return;
+            girando = true;
+            resultadoDiv.textContent = ""; // Limpiar resultado anterior
+            // Ocultar timer al girar
+            timerContainer.style.display = "none";
+            detenerTimer();
+            let vueltas = 5 + Math.random() * 3;
+            let destino = angulo + vueltas * 2 * Math.PI + (2 * Math.PI * Math.random()) / opciones.length;
+            let inicio = null;
+            let anguloInicial = angulo;
+            function animar(ts) {
+                if (!inicio) inicio = ts;
+                let t = Math.min((ts - inicio) / 3000, 1);
+                let ease = 1 - Math.pow(1 - t, 3);
+                angulo = anguloInicial + (destino - anguloInicial) * ease;
+                dibujarRuleta(angulo);
+                if (t < 1) {
+                    requestAnimationFrame(animar);
+                } else {
+                    angulo = destino % (2 * Math.PI);
+                    dibujarRuleta(angulo);
+                    girando = false;
+                    // Mostrar opción seleccionada
+                    if (opciones.length > 0) {
+                        const n = opciones.length;
+                        const arc = 2 * Math.PI / n;
+                        let anguloFlecha = (angulo + Math.PI/2) % (2 * Math.PI);
+                        let indice = Math.floor((n - (anguloFlecha / arc) % n) % n);
+                        if (indice >= 0 && indice < opciones.length) {
+                            resultadoDiv.textContent = "Opción seleccionada: " + opciones[indice];
+                            ultimaOpcionSeleccionada = opciones[indice];
+                            mostrarTimerSiEsNecesario();
+                        } else {
+                            resultadoDiv.textContent = "";
+                            ultimaOpcionSeleccionada = null;
+                            timerContainer.style.display = "none";
+                            detenerTimer();
+                        }
+                    }
+                }
+            }
+            requestAnimationFrame(animar);
+        };
+
+        btnBorrarTodo.onclick = function() {
+            opciones.length = 0;
+            angulo = 0;
+            actualizarLista();
+            resultadoDiv.textContent = "";
+            timerContainer.style.display = "none";
+            detenerTimer();
+        };
+
+        // Inicial
+        actualizarLista();
+    </script>
+</body>
+</html>
