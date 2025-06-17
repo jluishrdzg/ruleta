@@ -22,12 +22,19 @@
             --radius: 8px;
             --md-elevate: 0 2px 8px rgba(33,33,33,0.10);
         }
+        body, html {
+            height: 100%;
+            min-height: 100vh;
+        }
         body {
             font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
             background: var(--bg);
             margin: 0;
             padding: 0;
             transition: background 0.2s, color 0.2s;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         h2 {
             text-align: center;
@@ -38,16 +45,26 @@
             font-size: 2.2rem;
             font-weight: 500;
         }
+        .main-vertical-center {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 0;
+        }
         .layout {
             display: flex;
             flex-direction: row;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             gap: 2vw;
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 10px;
+            align-items: center;
+            min-height: 0;
         }
         .panel, .ruleta-panel, .timer-panel {
             background: var(--white);
@@ -423,7 +440,7 @@
         @media (max-width: 1100px) {
             .layout {
                 flex-direction: column;
-                align-items: stretch;
+                align-items: center;
                 gap: 1.5rem;
                 max-width: 98vw;
             }
@@ -471,54 +488,56 @@
         </svg>
     </button>
     <br><br>
-    <div class="layout">
-        <div class="panel">
-            <div class="inputs-row">
-                <input type="text" id="opcion" placeholder="Agregar opción" />
-                <button id="agregar">Agregar</button>
-                <button id="borrar-todo">Borrar todas</button>
-            </div>
-            <label class="switch-label">
-                <span>Eliminar opción automáticamente al ser elegida</span>
-                <span class="switch">
-                    <input type="checkbox" id="eliminar-al-elegir">
-                    <span class="slider"></span>
-                </span>
-            </label>
-            <label class="timer-label">
-                <span>Mostrar timer de</span>
-                <span>segundo(s)</span>
-                <span class="switch">
-                    <input type="checkbox" id="habilitar-timer">
-                    <span class="slider"></span>
-                </span>
-            </label>
-            <label class="timer-label">
-                <span>Tiempo timer</span>
-                <input type="number" id="timer-minutos" min="1" max="5999" value="10" style="width:64px; margin:0 6px; border-radius:4px; border:1px solid #bbb; padding:3px 6px; font-size:1em;">
-                <span>segundo(s)</span>
-            </label>
-            <ul id="opciones"></ul>
-        </div>
-        <div class="ruleta-panel">
-            <canvas id="ruleta" width="300" height="300"></canvas><br>
-            <button id="girar">Girar Ruleta</button>
-            <div id="resultado"></div>
-        </div>
-        <div class="timer-panel">
-            <div id="timer-container" class="timer-container" style="display:none;">
-                <div id="timer-display" class="timer-display">01:00</div>
-                <button id="timer-toggle" class="timer-play-btn">▶ Iniciar</button>
-                <button id="timer-reset" class="timer-play-btn" style="background:#2563eb;color:#fff;margin-top:8px;">
-                    <span style="font-size:1.2em;vertical-align:middle;display:inline-block;line-height:1;">
-                        <!-- Flat refresh icon SVG -->
-                        <svg width="20" height="20" viewBox="0 0 20 20" style="vertical-align:middle;margin-right:4px;" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 10a7 7 0 1 1 2.05 4.95"/>
-                            <polyline points="3 16 3 10 9 10"/>
-                        </svg>
+    <div class="main-vertical-center">
+        <div class="layout">
+            <div class="panel">
+                <div class="inputs-row">
+                    <input type="text" id="opcion" placeholder="Agregar opción" />
+                    <button id="agregar">Agregar</button>
+                    <button id="borrar-todo">Borrar todas</button>
+                </div>
+                <label class="switch-label">
+                    <span>Eliminar opción automáticamente al ser elegida</span>
+                    <span class="switch">
+                        <input type="checkbox" id="eliminar-al-elegir">
+                        <span class="slider"></span>
                     </span>
-                    Reiniciar
-                </button>
+                </label>
+                <label class="timer-label">
+                    <span>Mostrar timer de</span>
+                    <span>segundo(s)</span>
+                    <span class="switch">
+                        <input type="checkbox" id="habilitar-timer">
+                        <span class="slider"></span>
+                    </span>
+                </label>
+                <label class="timer-label">
+                    <span>Tiempo timer</span>
+                    <input type="number" id="timer-minutos" min="1" max="5999" value="10" style="width:64px; margin:0 6px; border-radius:4px; border:1px solid #bbb; padding:3px 6px; font-size:1em;">
+                    <span>segundo(s)</span>
+                </label>
+                <ul id="opciones"></ul>
+            </div>
+            <div class="ruleta-panel">
+                <canvas id="ruleta" width="300" height="300"></canvas><br>
+                <button id="girar">Girar Ruleta</button>
+                <div id="resultado"></div>
+            </div>
+            <div class="timer-panel">
+                <div id="timer-container" class="timer-container" style="display:none;">
+                    <div id="timer-display" class="timer-display">01:00</div>
+                    <button id="timer-toggle" class="timer-play-btn">▶ Iniciar</button>
+                    <button id="timer-reset" class="timer-play-btn" style="background:#2563eb;color:#fff;margin-top:8px;">
+                        <span style="font-size:1.2em;vertical-align:middle;display:inline-block;line-height:1;">
+                            <!-- Flat refresh icon SVG -->
+                            <svg width="20" height="20" viewBox="0 0 20 20" style="vertical-align:middle;margin-right:4px;" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 10a7 7 0 1 1 2.05 4.95"/>
+                                <polyline points="3 16 3 10 9 10"/>
+                            </svg>
+                        </span>
+                        Reiniciar
+                    </button>
+                </div>
             </div>
         </div>
     </div>
