@@ -4,11 +4,25 @@
     <meta charset="UTF-8">
     <title>Ruleta de Opciones</title>
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #60a5fa;
+            --danger: #e11d48;
+            --danger-light: #fca5a5;
+            --success: #22c55e;
+            --bg: #f9fafb;
+            --white: #fff;
+            --gray: #e5e7eb;
+            --gray-dark: #6b7280;
+            --shadow: 0 4px 24px rgba(37,99,235,0.08);
+            --radius: 14px;
+        }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f8f8fa;
+            background: var(--bg);
             margin: 0;
             padding: 0;
+            transition: background 0.2s, color 0.2s;
         }
         h2 {
             text-align: center;
@@ -17,66 +31,86 @@
             margin-bottom: 10px;
             letter-spacing: 1px;
         }
-        .container {
-            max-width: 420px;
-            margin: 30px auto 0 auto;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            padding: 28px 24px 24px 24px;
+        .layout {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 2vw;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 10px;
         }
-        #opcion {
-            width: 60%;
-            padding: 8px 10px;
-            border: 1px solid #bbb;
-            border-radius: 5px;
+        .panel {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px 20px 24px 20px;
+            min-width: 260px;
+            max-width: 340px;
+            flex: 1 1 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2em;
+            min-height: 420px;
+        }
+        .panel h3 {
+            margin-top: 0;
+            margin-bottom: 0.7em;
+            color: var(--primary);
+            font-size: 1.2em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .panel .inputs-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .panel .inputs-row input[type="text"],
+        .timer-label input[type="number"] {
+            flex: 1 1 140px;
+            min-width: 0;
+            padding: 10px 12px;
+            border: 1.5px solid var(--gray);
+            border-radius: 7px;
             font-size: 1em;
-            margin-bottom: 10px;
+            background: var(--bg);
             transition: border 0.2s;
+            color: #787978;
         }
-        #opcion:focus {
-            border: 1.5px solid #4a90e2;
+        .panel .inputs-row input[type="text"]:focus {
+            border: 1.5px solid var(--primary);
             outline: none;
         }
-        #agregar, #borrar-todo, #girar {
-            padding: 8px 18px;
+        #agregar, #borrar-todo {
+            padding: 10px 14px;
             border: none;
-            border-radius: 5px;
+            border-radius: 7px;
             font-size: 1em;
-            margin-left: 6px;
-            margin-bottom: 10px;
+            font-weight: 500;
             cursor: pointer;
-            transition: background 0.2s, color 0.2s;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
         #agregar {
-            background: #4a90e2;
-            color: #fff;
+            background: var(--primary);
+            color: var(--white);
         }
         #agregar:disabled {
-            background: #b3d1f7;
-            color: #fff;
+            background: var(--primary-light);
+            color: var(--white);
             cursor: not-allowed;
         }
         #borrar-todo {
-            background: #e74c3c;
-            color: #fff;
+            background: var(--danger);
+            color: var(--white);
         }
         #borrar-todo:disabled {
-            background: #f5b7b1;
-            color: #fff;
-            cursor: not-allowed;
-        }
-        #girar {
-            background: #27ae60;
-            color: #fff;
-            margin-top: 10px;
-            width: 100%;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        #girar:disabled {
-            background: #b7eacb;
-            color: #fff;
+            background: var(--danger-light);
+            color: var(--white);
             cursor: not-allowed;
         }
         #opciones {
@@ -89,8 +123,8 @@
         #opciones li {
             background: #f4f8fb;
             margin-bottom: 7px;
-            padding: 7px 12px;
-            border-radius: 5px;
+            padding: 8px 14px;
+            border-radius: 7px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -103,40 +137,24 @@
             color: #fff;
             background: #e00;
             border: none;
-            border-radius: 3px;
+            border-radius: 4px;
             cursor: pointer;
-            padding: 2px 9px 2px 9px;
+            padding: 2px 11px 2px 11px;
             font-size: 1em;
             transition: background 0.2s;
         }
         .eliminar-btn:hover {
             background: #b30000;
         }
-        #ruleta {
-            display: block;
-            margin: 18px auto 10px auto;
-            background: #f4f8fb;
-            border: 2px solid #4a90e2;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(74,144,226,0.08);
-        }
-        #resultado {
-            margin-top: 22px;
-            font-size: 1.25em;
-            font-weight: bold;
-            text-align: center;
-            color: #27ae60;
-            min-height: 1.5em;
-            letter-spacing: 1px;
-        }
-        .switch-label {
+        .switch-label, .timer-label {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin: 14px 0 0 0;
+            gap: 10px;
+            margin: 10px 0 0 0;
             font-size: 1em;
             color: #444;
             user-select: none;
+            font-weight: 500;
         }
         .switch {
             position: relative;
@@ -176,22 +194,90 @@
         .switch input:checked + .slider:before {
             transform: translateX(20px);
         }
-        .timer-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 14px 0 0 0;
+        .timer-label input[type="number"] {
+            width: 48px;
+            border-radius: 5px;
+            border: 1.5px solid var(--gray);
+            padding: 4px 8px;
             font-size: 1em;
-            color: #444;
-            user-select: none;
+            background: var(--bg);
+            text-align: center;
+        }
+        .timer-label input[type="number"]:focus {
+            border: 1.5px solid var(--primary);
+            outline: none;
+        }
+        .ruleta-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            flex: 1 1 400px;
+            min-width: 320px;
+            max-width: 500px;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px 10px 24px 10px;
+            min-height: 420px;
+        }
+        #ruleta {
+            display: block;
+            margin: 0 auto 10px auto;
+            background: #f4f8fb;
+            border: 2px solid #4a90e2;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(74,144,226,0.08);
+            max-width: 100%;
+            height: auto;
+        }
+        #girar {
+            background: #27ae60;
+            color: #fff;
+            margin-top: 10px;
+            width: 100%;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px rgba(34,197,94,0.08);
+        }
+        #girar:disabled {
+            background: #b7eacb;
+            color: #fff;
+            cursor: not-allowed;
+        }
+        #resultado {
+            margin-top: 22px;
+            font-size: 1.25em;
+            font-weight: bold;
+            text-align: center;
+            color: #27ae60;
+            min-height: 1.5em;
+            letter-spacing: 1px;
+        }
+        .timer-panel {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px 20px 24px 20px;
+            min-width: 220px;
+            max-width: 340px;
+            flex: 1 1 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 180px;
+            margin-top: 0;
         }
         .timer-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 18px;
+            margin-top: 0;
             margin-bottom: 0;
             min-height: 60px;
+            gap: 0.5em;
+            width: 100%;
         }
         .timer-display {
             font-size: 2em;
@@ -204,7 +290,7 @@
             background: #4a90e2;
             color: #fff;
             border: none;
-            border-radius: 5px;
+            border-radius: 7px;
             padding: 7px 22px;
             font-size: 1.1em;
             font-weight: bold;
@@ -216,51 +302,169 @@
             color: #fff;
             cursor: not-allowed;
         }
-        @media (max-width: 500px) {
-            .container {
+        /* Theme toggle button style */
+        .theme-toggle {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            z-index: 100;
+            background: var(--white);
+            border: 1.5px solid var(--gray);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            transition: background 0.2s, border 0.2s;
+        }
+        .theme-toggle svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+        /* Dark theme */
+        body.dark {
+            --primary: #60a5fa;
+            --primary-light: #2563eb;
+            --danger: #fca5a5;
+            --danger-light: #e11d48;
+            --success: #4ade80;
+            --bg: #18181b;
+            --white: #23232b;
+            --gray: #27272a;
+            --gray-dark: #d1d5db;
+            --shadow: 0 4px 24px rgba(37,99,235,0.12);
+            color: #e5e7eb;
+        }
+        body.dark h2, body.dark .panel h3, body.dark #resultado, body.dark .switch-label, body.dark .timer-label {
+            color: #e5e7eb !important;
+        }
+        body.dark #opciones li {
+            background: #23232b;
+            color: #e5e7eb;
+        }
+        body.dark .container, body.dark .panel, body.dark .ruleta-panel, body.dark .timer-panel, body.dark #ruleta, body.dark .timer-container {
+            background: #23232b !important;
+            color: #e5e7eb;
+        }
+        body.dark #ruleta {
+            border-color: #60a5fa;
+        }
+        body.dark .eliminar-btn {
+            background: #e11d48;
+        }
+        body.dark .eliminar-btn:hover {
+            background: #be123c;
+        }
+        body.dark .timer-play-btn {
+            background: #2563eb;
+            color: #fff;
+        }
+        body.dark .timer-play-btn[style*="background:#eab308"] {
+            background: #fde68a !important;
+            color: #23232b !important;
+        }
+        body.dark .theme-toggle {
+            background: #23232b;
+            border-color: #27272a;
+        }
+        @media (max-width: 1100px) {
+            .layout {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1.5rem;
                 max-width: 98vw;
+            }
+            .panel, .ruleta-panel, .timer-panel {
+                max-width: 98vw;
+                margin: 0 auto;
+            }
+            .ruleta-panel {
+                min-width: 0;
+            }
+        }
+        @media (max-width: 600px) {
+            .container, .panel, .ruleta-panel, .timer-panel {
+                max-width: 99vw;
                 padding: 10px 2vw 18px 2vw;
             }
             #ruleta {
                 width: 98vw !important;
                 height: 98vw !important;
-                max-width: 300px;
-                max-height: 300px;
+                max-width: 320px;
+                max-height: 320px;
+            }
+            .panel .inputs-row {
+                flex-direction: column;
+                gap: 0.7rem;
+            }
+        }
+        @media (max-width: 400px) {
+            #ruleta {
+                max-width: 220px;
+                max-height: 220px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Theme toggle button -->
+    <button id="theme-toggle" class="theme-toggle" title="Cambiar tema">
+        <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+        </svg>
+    </button>
     <h2>Ruleta de Opciones</h2>
-    <div class="container">
-        <input type="text" id="opcion" placeholder="Agregar opción" />
-        <button id="agregar">Agregar</button>
-        <button id="borrar-todo">Borrar todas</button>
-        <label class="switch-label">
-            <span>Eliminar opción automáticamente al ser elegida</span>
-            <span class="switch">
-                <input type="checkbox" id="eliminar-al-elegir">
-                <span class="slider"></span>
-            </span>
-        </label>
-        <label class="timer-label">
-            <span>Mostrar timer de</span>
-            <input type="number" id="timer-minutos" min="1" max="99" value="1" style="width:48px; margin:0 6px; border-radius:4px; border:1px solid #bbb; padding:3px 6px; font-size:1em;">
-            <span>minuto(s)</span>
-            <span class="switch">
-                <input type="checkbox" id="habilitar-timer">
-                <span class="slider"></span>
-            </span>
-        </label>
-        <ul id="opciones"></ul>
-        <canvas id="ruleta" width="300" height="300"></canvas><br>
-        <button id="girar">Girar Ruleta</button>
-        <div id="resultado"></div>
-        <div id="timer-container" class="timer-container" style="display:none;">
-            <div id="timer-display" class="timer-display">01:00</div>
-            <button id="timer-play" class="timer-play-btn">▶ Iniciar</button>
+    <div class="layout">
+        <div class="panel">
+            <div class="inputs-row">
+                <input type="text" id="opcion" placeholder="Agregar opción" />
+                <button id="agregar">Agregar</button>
+                <button id="borrar-todo">Borrar todas</button>
+            </div>
+            <label class="switch-label">
+                <span>Eliminar opción automáticamente al ser elegida</span>
+                <span class="switch">
+                    <input type="checkbox" id="eliminar-al-elegir">
+                    <span class="slider"></span>
+                </span>
+            </label>
+            <label class="timer-label">
+                <span>Mostrar timer de</span>
+                <span>minuto(s)</span>
+                <span class="switch">
+                    <input type="checkbox" id="habilitar-timer">
+                    <span class="slider"></span>
+                </span>
+            </label>
+            <label class="timer-label">
+                <span>Tiempo timer</span>
+                <input type="number" id="timer-minutos" min="1" max="99" value="1" style="width:48px; margin:0 6px; border-radius:4px; border:1px solid #bbb; padding:3px 6px; font-size:1em;">
+                <span>minuto(s)</span>
+            </label>
+            <ul id="opciones"></ul>
+        </div>
+        <div class="ruleta-panel">
+            <canvas id="ruleta" width="300" height="300"></canvas><br>
+            <button id="girar">Girar Ruleta</button>
+            <div id="resultado"></div>
+        </div>
+        <div class="timer-panel">
+            <div id="timer-container" class="timer-container" style="display:none;">
+                <div id="timer-display" class="timer-display">01:00</div>
+                <button id="timer-toggle" class="timer-play-btn">▶ Iniciar</button>
+                <button id="timer-reset" class="timer-play-btn" style="background:#2563eb;color:#fff;margin-top:8px;">🔄 Reiniciar</button>
+            </div>
         </div>
     </div>
+    <audio id="timer-audio" src="audio.mp3" preload="auto"></audio>
     <script>
         function drawWheel(canvas, options, angle) {
             const ctx = canvas.getContext("2d");
@@ -331,7 +535,9 @@
         const timerMinutosInput = document.getElementById('timer-minutos');
         const timerContainer = document.getElementById('timer-container');
         const timerDisplay = document.getElementById('timer-display');
-        const timerPlayBtn = document.getElementById('timer-play');
+        const timerToggleBtn = document.getElementById('timer-toggle');
+        const timerResetBtn = document.getElementById('timer-reset');
+        const timerAudio = document.getElementById('timer-audio');
         let timer = null;
         let timerSegundos = 60;
         let timerActivo = false;
@@ -432,11 +638,14 @@
             let min = String(Math.floor(timerSegundos / 60)).padStart(2, '0');
             let seg = String(timerSegundos % 60).padStart(2, '0');
             timerDisplay.textContent = `${min}:${seg}`;
-            timerPlayBtn.disabled = false;
+            timerActivo = false;
+            timerToggleBtn.textContent = "▶ Iniciar";
+            timerToggleBtn.style.background = "#4a90e2";
+            timerToggleBtn.style.color = "#fff";
         }
 
         function mostrarTimerSiEsNecesario() {
-            if (chkHabilitarTimer.checked && ultimaOpcionSeleccionada !== null) {
+            if (chkHabilitarTimer.checked && getTimerSegundos() > 0 && ultimaOpcionSeleccionada !== null) {
                 timerContainer.style.display = "";
                 resetTimerUI();
             } else {
@@ -451,23 +660,49 @@
                 timer = null;
             }
             timerActivo = false;
-            timerPlayBtn.disabled = false;
+            timerToggleBtn.textContent = "▶ Iniciar";
+            timerToggleBtn.style.background = "#4a90e2";
+            timerToggleBtn.style.color = "#fff";
         }
 
-        timerPlayBtn.onclick = function() {
-            if (timerActivo) return;
-            timerActivo = true;
-            timerPlayBtn.disabled = true;
-            timer = setInterval(() => {
-                timerSegundos--;
-                let min = String(Math.floor(timerSegundos / 60)).padStart(2, '0');
-                let seg = String(timerSegundos % 60).padStart(2, '0');
-                timerDisplay.textContent = `${min}:${seg}`;
-                if (timerSegundos <= 0) {
-                    detenerTimer();
-                    timerDisplay.textContent = "00:00";
+        timerToggleBtn.onclick = function() {
+            if (!timerActivo) {
+                // Iniciar timer
+                timerActivo = true;
+                timerToggleBtn.textContent = "⏸ Pausar";
+                timerToggleBtn.style.background = "#eab308";
+                timerToggleBtn.style.color = "#333";
+                timer = setInterval(() => {
+                    timerSegundos--;
+                    let min = String(Math.floor(timerSegundos / 60)).padStart(2, '0');
+                    let seg = String(timerSegundos % 60).padStart(2, '0');
+                    timerDisplay.textContent = `${min}:${seg}`;
+                    if (timerSegundos <= 0) {
+                        detenerTimer();
+                        timerDisplay.textContent = "00:00";
+                        // Reproducir sonido al terminar
+                        if (timerAudio) {
+                            timerAudio.currentTime = 0;
+                            timerAudio.play();
+                        }
+                    }
+                }, 1000);
+            } else {
+                // Pausar timer
+                if (timer) {
+                    clearInterval(timer);
+                    timer = null;
                 }
-            }, 1000);
+                timerActivo = false;
+                timerToggleBtn.textContent = "▶ Iniciar";
+                timerToggleBtn.style.background = "#4a90e2";
+                timerToggleBtn.style.color = "#fff";
+            }
+        };
+
+        timerResetBtn.onclick = function() {
+            detenerTimer();
+            resetTimerUI();
         };
 
         chkHabilitarTimer.addEventListener('change', function() {
@@ -485,6 +720,34 @@
                 detenerTimer();
             }
         });
+
+        // Guardar configuración en localStorage
+        function guardarConfiguracion() {
+            localStorage.setItem('ruletaConfig', JSON.stringify({
+                eliminarAlElegir: chkEliminarAlElegir.checked,
+                habilitarTimer: chkHabilitarTimer.checked,
+                timerMinutos: timerMinutosInput.value
+            }));
+        }
+
+        // Cargar configuración de localStorage
+        function cargarConfiguracion() {
+            const config = JSON.parse(localStorage.getItem('ruletaConfig') || '{}');
+            if (typeof config.eliminarAlElegir === 'boolean') {
+                chkEliminarAlElegir.checked = config.eliminarAlElegir;
+            }
+            if (typeof config.habilitarTimer === 'boolean') {
+                chkHabilitarTimer.checked = config.habilitarTimer;
+            }
+            if (config.timerMinutos !== undefined) {
+                timerMinutosInput.value = config.timerMinutos;
+            }
+        }
+
+        // Eventos para guardar configuración al cambiar
+        chkEliminarAlElegir.addEventListener('change', guardarConfiguracion);
+        chkHabilitarTimer.addEventListener('change', guardarConfiguracion);
+        timerMinutosInput.addEventListener('change', guardarConfiguracion);
 
         btnGirar.onclick = function() {
             // Eliminar la opción seleccionada anterior si el switch está activado
@@ -556,7 +819,40 @@
             detenerTimer();
         };
 
+        // THEME TOGGLE LOGIC
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const iconSun = document.getElementById('icon-sun');
+        const iconMoon = document.getElementById('icon-moon');
+
+        function setTheme(dark) {
+            if (dark) {
+                document.body.classList.add('dark');
+                iconSun.style.display = 'none';
+                iconMoon.style.display = '';
+                localStorage.setItem('ruletaTheme', 'dark');
+            } else {
+                document.body.classList.remove('dark');
+                iconSun.style.display = '';
+                iconMoon.style.display = 'none';
+                localStorage.setItem('ruletaTheme', 'light');
+            }
+        }
+
+        // Inicializar tema desde localStorage o preferencia del sistema
+        (function() {
+            let theme = localStorage.getItem('ruletaTheme');
+            if (!theme) {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            setTheme(theme === 'dark');
+        })();
+
+        themeToggleBtn.onclick = function() {
+            setTheme(!document.body.classList.contains('dark'));
+        };
+
         // Inicial
+        cargarConfiguracion();
         actualizarLista();
     </script>
 </body>
