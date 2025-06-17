@@ -487,7 +487,7 @@
             </label>
             <label class="timer-label">
                 <span>Mostrar timer de</span>
-                <span>minuto(s)</span>
+                <span>segundo(s)</span>
                 <span class="switch">
                     <input type="checkbox" id="habilitar-timer">
                     <span class="slider"></span>
@@ -495,8 +495,8 @@
             </label>
             <label class="timer-label">
                 <span>Tiempo timer</span>
-                <input type="number" id="timer-minutos" min="1" max="99" value="1" style="width:48px; margin:0 6px; border-radius:4px; border:1px solid #bbb; padding:3px 6px; font-size:1em;">
-                <span>minuto(s)</span>
+                <input type="number" id="timer-minutos" min="1" max="5999" value="10" style="width:64px; margin:0 6px; border-radius:4px; border:1px solid #bbb; padding:3px 6px; font-size:1em;">
+                <span>segundo(s)</span>
             </label>
             <ul id="opciones"></ul>
         </div>
@@ -605,10 +605,10 @@
         let ultimaOpcionSeleccionada = null;
 
         function getTimerSegundos() {
-            let min = parseInt(timerMinutosInput.value, 10);
-            if (isNaN(min) || min < 1) min = 1;
-            if (min > 99) min = 99;
-            return min * 60;
+            let seg = parseInt(timerMinutosInput.value, 10);
+            if (isNaN(seg) || seg < 1) seg = 1;
+            if (seg > 5999) seg = 5999;
+            return seg;
         }
 
         function guardarOpciones() {
@@ -772,10 +772,10 @@
 
         timerMinutosInput.addEventListener('change', function() {
             // Limitar valores y actualizar timer si está visible
-            let min = parseInt(timerMinutosInput.value, 10);
-            if (isNaN(min) || min < 1) min = 1;
-            if (min > 99) min = 99;
-            timerMinutosInput.value = min;
+            let seg = parseInt(timerMinutosInput.value, 10);
+            if (isNaN(seg) || seg < 1) seg = 1;
+            if (seg > 5999) seg = 5999;
+            timerMinutosInput.value = seg;
             if (timerContainer.style.display !== "none") {
                 resetTimerUI();
                 detenerTimer();
@@ -787,7 +787,7 @@
             localStorage.setItem('ruletaConfig', JSON.stringify({
                 eliminarAlElegir: chkEliminarAlElegir.checked,
                 habilitarTimer: chkHabilitarTimer.checked,
-                timerMinutos: timerMinutosInput.value
+                timerMinutos: timerMinutosInput.value // ahora son segundos
             }));
         }
 
